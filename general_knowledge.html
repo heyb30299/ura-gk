@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0b1120">
+<title>URA - General Knowledge</title>
+
+<style>
+:root {
+    --bg: #0b1120;
+    --bg-elev: #111827;
+    --card: #1e293b;
+    --card-hover: #263449;
+    --text: #f8fafc;
+    --text-dim: #94a3b8;
+    --text-mute: #64748b;
+    --accent: #6366f1;
+    --accent-hover: #4f46e5;
+    --accent-soft: rgba(99,102,241,0.15);
+    --border: #1f2937;
+    --border-strong: #334155;
+    --success: #22c55e;
+    --error: #ef4444;
+    --warning: #eab308;
+    --sidebar-width: 260px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+}
+
+html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+    overscroll-behavior: none;
+}
+
+.app {
+    display: flex;
+    height: 100dvh;
+    width: 100%;
+}
+
+/* ============================
+   SIDEBAR
+   ============================ */
+.sidebar {
+    width: var(--sidebar-width);
+    background: rgba(17,24,39,0.98);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+}
+
+.sidebar-header {
+    padding: 22px 20px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.sidebar-header h1 {
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    color: var(--text);
+}
+
+.sidebar-header h1 span {
+    color: var(--accent);
+}
+
+.sidebar-header p {
+    font-size: 10.5px;
+    color: var(--text-mute);
+    margin-top: 4px;
+    letter-spacing: 1px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.topic-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 10px;
+}
+
+.topic-list::-webkit-scrollbar { width: 4px; }
+.topic-list::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 2px;
+}
+
+.topic-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    margin-bottom: 4px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    cursor: pointer;
+    color: var(--text-dim);
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+}
+
+.topic-item:hover {
+    background: var(--card);
+    color: var(--text);
+}
+
+.topic-item.active {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+    color: var(--accent);
+    font-weight: 600;
+}
+
+.topic-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+    width: 24px;
+    text-align: center;
+}
+
+.topic-name {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ============================
+   MAIN CONTENT
+   ============================ */
+.content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.content-header {
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(11,17,32,0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-shrink: 0;
+    z-index: 10;
+}
+
+.menu-toggle {
+    display: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.content-title {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.content-title .icon {
+    font-size: 22px;
+    flex-shrink: 0;
+}
+
+.content-title .name {
+    font-size: 18px;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.content-meta {
+    font-size: 12px;
+    color: var(--text-mute);
+    font-weight: 500;
+    flex-shrink: 0;
+}
+
+/* ============================
+   QUIZ AREA
+   ============================ */
+.quiz-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+}
+
+.quiz-area::-webkit-scrollbar { width: 6px; }
+.quiz-area::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 3px;
+}
+
+/* ============================
+   QUESTION CARD
+   ============================ */
+.question-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.question-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+.question-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 28px;
+    padding: 0 10px;
+    background: var(--accent-soft);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.question-text {
+    font-size: 15.5px;
+    line-height: 1.65;
+    color: var(--text);
+    font-weight: 500;
+    margin-bottom: 18px;
+}
+
+/* ============================
+   OPTIONS
+   ============================ */
+.options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    background: rgba(30,41,59,0.5);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-size: 14.5px;
+    line-height: 1.5;
+    color: var(--text);
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+    width: 100%;
+}
+
+.option:hover:not(.disabled) {
+    background: var(--card-hover);
+    border-color: var(--border-strong);
+}
+
+.option.selected {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+}
+
+.option.correct {
+    background: rgba(34,197,94,0.12);
+    border-color: var(--success);
+    color: #86efac;
+}
+
+.option.wrong {
+    background: rgba(239,68,68,0.12);
+    border-color: var(--error);
+    color: #fca5a5;
+}
+
+.option.disabled {
+    cursor: not-allowed;
+    opacity: 0.85;
+}
+
+.option-letter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--border-strong);
+    color: var(--text-dim);
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+    transition: all 0.2s;
+}
+
+.option.selected .option-letter {
+    background: var(--accent);
+    color: white;
+}
+
+.option.correct .option-letter {
+    background: var(--success);
+    color: white;
+}
+
+.option.wrong .option-letter {
+    background: var(--error);
+    color: white;
+}
+
+.option-text {
+    flex: 1;
+    padding-top: 4px;
+}
+
+/* ============================
+   EXPLANATION
+   ============================ */
+.explanation {
+    margin-top: 16px;
+    padding: 14px 16px;
+    background: rgba(99,102,241,0.08);
+    border-left: 3px solid var(--accent);
+    border-radius: 10px;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--text-dim);
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; max-height: 0; padding-top: 0; padding-bottom: 0; }
+    to { opacity: 1; max-height: 300px; padding-top: 14px; padding-bottom: 14px; }
+}
+
+.explanation-label {
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    display: block;
+    text-transform: uppercase;
+}
+
+/* ============================
+   LOADING / ERROR
+   ============================ */
+.loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    color: var(--text-mute);
+    gap: 16px;
+    text-align: center;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--border-strong);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.error-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-mute);
+}
+
+.error-state .icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.error-state .title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 8px;
+}
+
+.error-state .subtitle {
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+/* ============================
+   MOBILE OVERLAY
+   ============================ */
+.overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    z-index: 99;
+}
+
+.overlay.show {
+    display: block;
+}
+
+/* ============================
+   MOBILE RESPONSIVE
+   ============================ */
+@media (max-width: 768px) {
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100dvh;
+        z-index: 100;
+        transform: translateX(-100%);
+        box-shadow: 4px 0 24px rgba(0,0,0,0.5);
+    }
+    
+    .sidebar.open {
+        transform: translateX(0);
+    }
+    
+    .menu-toggle {
+        display: flex;
+    }
+    
+    .quiz-area {
+        padding: 16px;
+    }
+    
+    .question-card {
+        padding: 16px;
+        border-radius: 14px;
+    }
+    
+    .content-header {
+        padding: 14px 16px;
+    }
+    
+    .content-title .name {
+        font-size: 16px;
+    }
+}
+
+/* ============================
+   PRINT PROTECTION
+   ============================ */
+@media print {
+    body * {
+        display: none !important;
+    }
+    body::after {
+        content: '🔒 Content is protected';
+        display: block;
+        font-size: 24px;
+        text-align: center;
+        padding: 100px;
+    }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h1>URA<span>.</span> GK</h1>
+            <p>General Knowledge</p>
+        </div>
+        <div class="topic-list" id="topicList">
+            <!-- Populated dynamically -->
+        </div>
+    </aside>
+
+    <!-- OVERLAY (mobile) -->
+    <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+    <!-- MAIN CONTENT -->
+    <main class="content">
+        <header class="content-header">
+            <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+            <div class="content-title">
+                <span class="icon" id="topicIcon">📚</span>
+                <span class="name" id="topicTitle">Select a topic</span>
+            </div>
+            <div class="content-meta" id="topicMeta"></div>
+        </header>
+
+        <div class="quiz-area" id="quizArea">
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <div>Loading topics...</div>
+            </div>
+        </div>
+    </main>
+
+</div>
+
+<script>
+/* ============================================================
+   STATE
+   ============================================================ */
+const state = {
+    topics: [],
+    currentTopic: null,
+    currentQuestions: [],
+    questionsPerPage: 20
+};
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('show');
+}
+
+function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('overlay').classList.remove('show');
+}
+
+/* ============================================================
+   LOAD TOPICS
+   ============================================================ */
+async function loadTopics() {
+    try {
+        const res = await fetch('/api/topics');
+        if (!res.ok) throw new Error('Failed to load');
+        
+        const data = await res.json();
+        state.topics = data.topics || [];
+        
+        renderTopics();
+        
+        // Auto-load first topic
+        if (state.topics.length > 0) {
+            loadTopic(state.topics[0].id);
+        } else {
+            showError('No topics available');
+        }
+        
+    } catch (err) {
+        showError('Failed to connect to server');
+    }
+}
+
+function renderTopics() {
+    const list = document.getElementById('topicList');
+    
+    if (state.topics.length === 0) {
+        list.innerHTML = '<div style="padding:20px;color:var(--text-mute);font-size:13px;text-align:center;">No topics yet</div>';
+        return;
+    }
+    
+    list.innerHTML = state.topics.map(t => `
+        <button class="topic-item" data-id="${t.id}" onclick="loadTopic('${t.id}')">
+            <span class="topic-icon">${t.icon || '📄'}</span>
+            <span class="topic-name">${escapeHtml(t.name)}</span>
+        </button>
+    `).join('');
+}
+
+function setActiveTopic(topicId) {
+    document.querySelectorAll('.topic-item').forEach(el => {
+        el.classList.toggle('active', el.dataset.id === topicId);
+    });
+}
+
+/* ============================================================
+   LOAD TOPIC
+   ============================================================ */
+async function loadTopic(topicId) {
+    const topic = state.topics.find(t => t.id === topicId);
+    if (!topic) return;
+    
+    state.currentTopic = topic;
+    setActiveTopic(topicId);
+    closeSidebar();
+    
+    // Update header
+    document.getElementById('topicIcon').textContent = topic.icon || '📚';
+    document.getElementById('topicTitle').textContent = topic.name;
+    document.getElementById('topicMeta').textContent = '';
+    
+    // Show loading
+    document.getElementById('quizArea').innerHTML = `
+        <div class="loading-state">
+            <div class="spinner"></div>
+            <div>Loading ${escapeHtml(topic.name)}...</div>
+        </div>
+    `;
+    
+    try {
+        const res = await fetch(`/api/questions/${topicId}`);
+        if (!res.ok) throw new Error('Failed to load');
+        
+        const data = await res.json();
+        if (!data.success) throw new Error(data.error || 'Failed');
+        
+        state.currentQuestions = data.questions || [];
+        
+        const displayQuestions = state.currentQuestions.slice(0, state.questionsPerPage);
+        renderQuestions(displayQuestions);
+        
+        document.getElementById('topicMeta').textContent = 
+            `Showing ${displayQuestions.length} of ${state.currentQuestions.length}`;
+        
+    } catch (err) {
+        showError('Failed to load questions', err.message);
+    }
+}
+
+/* ============================================================
+   RENDER QUESTIONS
+   ============================================================ */
+function renderQuestions(questions) {
+    const area = document.getElementById('quizArea');
+    
+    if (!questions || questions.length === 0) {
+        area.innerHTML = `
+            <div class="loading-state">
+                <div style="font-size:48px;">📭</div>
+                <div>No questions available for this topic</div>
+            </div>
+        `;
+        return;
+    }
+    
+    area.innerHTML = questions.map((q, idx) => `
+        <div class="question-card" data-qid="${q.id}">
+            <div class="question-header">
+                <span class="question-number">Q${idx + 1}</span>
+            </div>
+            <div class="question-text">${escapeHtml(q.question)}</div>
+            <div class="options">
+                ${q.options.map((opt, i) => `
+                    <button class="option" 
+                            data-qid="${q.id}" 
+                            data-index="${i}"
+                            onclick="selectOption(${q.id}, ${i}, this)">
+                        <span class="option-letter">${String.fromCharCode(65 + i)}</span>
+                        <span class="option-text">${escapeHtml(opt)}</span>
+                    </button>
+                `).join('')}
+            </div>
+        </div>
+    `).join('');
+}
+
+/* ============================================================
+   SELECT OPTION
+   ============================================================ */
+function selectOption(questionId, selectedIndex, btn) {
+    const question = state.currentQuestions.find(q => q.id === questionId);
+    if (!question) return;
+    
+    const card = btn.closest('.question-card');
+    if (!card || card.dataset.answered === 'true') return;
+    
+    card.dataset.answered = 'true';
+    const correctIndex = question.answer;
+    
+    // Mark all options
+    card.querySelectorAll('.option').forEach((opt, i) => {
+        opt.classList.add('disabled');
+        if (i === correctIndex) opt.classList.add('correct');
+        else if (i === selectedIndex) opt.classList.add('wrong');
+    });
+    
+    // Add explanation
+    if (question.explanation) {
+        const expDiv = document.createElement('div');
+        expDiv.className = 'explanation';
+        expDiv.innerHTML = `
+            <span class="explanation-label">💡 Explanation</span>
+            ${escapeHtml(question.explanation)}
+        `;
+        card.appendChild(expDiv);
+    }
+}
+
+/* ============================================================
+   ERROR STATE
+   ============================================================ */
+function showError(title, subtitle = '') {
+    document.getElementById('quizArea').innerHTML = `
+        <div class="error-state">
+            <div class="icon">⚠️</div>
+            <div class="title">${escapeHtml(title)}</div>
+            ${subtitle ? `<div class="subtitle">${escapeHtml(subtitle)}</div>` : ''}
+        </div>
+    `;
+}
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+function escapeHtml(str) {
+    const d = document.createElement('div');
+    d.textContent = String(str);
+    return d.innerHTML;
+}
+
+/* ============================================================
+   COPY PROTECTION
+   ============================================================ */
+document.addEventListener('copy', e => e.preventDefault());
+document.addEventListener('cut', e => e.preventDefault());
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('selectstart', e => e.preventDefault());
+document.addEventListener('dragstart', e => e.preventDefault());
+
+document.addEventListener('keydown', e => {
+    if (e.ctrlKey || e.metaKey) {
+        if (['c', 'u', 's', 'a', 'p'].includes(e.key.toLowerCase())) {
+            e.preventDefault();
+            return false;
+        }
+    }
+    if (e.key === 'F12') {
+        e.preventDefault();
+        return false;
+    }
+    if (e.ctrlKey && e.shiftKey && ['i', 'j'].includes(e.key.toLowerCase())) {
+        e.preventDefault();
+        return false;
+    }
+});
+
+/* ============================================================
+   INIT
+   ============================================================ */
+window.addEventListener('DOMContentLoaded', loadTopics);
+</script>
+
+</body>
+</html>
